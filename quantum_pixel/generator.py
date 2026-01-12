@@ -72,7 +72,7 @@ class Generator:
         Returns:
             Image.Image: the preview layer.
         """
-        assert 0 < intensity < 1, "Invalid intensity"
+        assert 0 <= intensity <= 1, "Invalid intensity"
 
         self._allowance = int(int(np.sum(self.img_data) * intensity))
         return self._generate(self.img_data, False)
