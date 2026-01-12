@@ -20,6 +20,7 @@
     const forms = document.getElementsByClassName('panel-controls');    
     Array.from(forms).forEach(function(form){
         form.addEventListener('submit', async (e) => {
+            e.preventDefault();
             const fd = new FormData(form);
             const save_path = crypto.randomUUID() + ".png";
             const selected = document.querySelector('#tabs-headers .tab-btn.active').dataset.target;
@@ -30,7 +31,6 @@
             result.textContent = 'Loading, please wait patiently.';
 
             try {
-                e.preventDefault();
                 const r = await fetch(location.pathname, {
                     method: 'POST',
                     body: fd
@@ -44,9 +44,8 @@
     })
 
     // remove file when user left.
-    window.addEventListener('beforeunload', async (e) => {
-        e.preventDefault();
-        await fetch(`/remove/${location.pathname.split("/").at(-1)}`, {
+    window.addEventListener('beforeunload', () => {
+        fetch(`/remove/${location.pathname.split("/").pop()}`, {
             method: 'POST',
             keepalive: true
         });
