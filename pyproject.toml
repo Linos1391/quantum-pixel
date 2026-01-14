@@ -1,5 +1,8 @@
 [project]
 name = "quantum-pixel"
+authors = [
+    { name="Linos1391", email="linos.coding@gmail.com" },
+]
 version = "0.1.0"
 description = "When both YES and NO are existed. Only human with emotions can comprehend."
 readme = "README.md"
@@ -10,3 +13,14 @@ dependencies = [
     "pillow>=12.0.0",
     "stegano>=0.9.7",
 ]
+classifiers=[
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.14",
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+]
+
+[project.urls]
+Repository = "https://github.com/Linos1391/quantum-pixel.git"
+Issues = "https://github.com/Linos1391/quantum-pixel/issues"
