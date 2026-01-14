@@ -19,7 +19,7 @@ from PIL import Image
 
 from . import Generator, Steganography
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 IMAGE_DIR = os.path.join(PROJECT_ROOT, "static", "images")
 os.makedirs(IMAGE_DIR, exist_ok=True)
 
