@@ -76,10 +76,10 @@ git clone https://github.com/Linos1391/quantum-pixel.git
 cd quantum-pixel
 ```
 
-| uv (recommended)                                         | python                            |
-| -------------------------------------------------------- | --------------------------------- |
-| `uv sync --locked --no-dev && uv cache prune --ci`       | `pip install -r requirements.txt` |
-| `uv run -- uvicorn quantum_pixel.web:app --host 0.0.0.0` | `fastapi run src`                 |
+| uv (recommended)                                   | python                            |
+| -------------------------------------------------- | --------------------------------- |
+| `uv sync --locked --no-dev && uv cache prune --ci` | `pip install -r requirements.txt` |
+| `uv run -- uvicorn src.web:app --host 0.0.0.0`     | `fastapi run src`                 |
 
 <br>
 
