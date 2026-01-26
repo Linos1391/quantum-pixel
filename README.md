@@ -46,16 +46,16 @@ I made this in response of AI slop. Those so-called AI artists had gone too far 
 <details>
   <summary>Mermaid source (github only)</summary>
 
-  ```mermaid
-  flowchart LR
-    A[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/material.jpeg?raw=true" width="200" height="200"/>]
-    B[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/encoded.jpeg?raw=true" width="200" height="200"/>]
-    C[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/grok.jpeg?raw=true" width="200" height="200"/>]
+```mermaid
+flowchart LR
+  A[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/material.jpeg?raw=true" width="200" height="200"/>]
+  B[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/encoded.jpeg?raw=true" width="200" height="200"/>]
+  C[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/grok.jpeg?raw=true" width="200" height="200"/>]
 
-    A-->|Encode| B
-    B -->|Decode| A
-    B -->|Grok edited| C
-  ```
+  A-->|Encode| B
+  B -->|Decode| A
+  B -->|Grok edited| C
+```
 
 </details>
 
