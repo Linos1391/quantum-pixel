@@ -3,7 +3,7 @@ name = "quantum-pixel"
 authors = [
     { name="Linos1391", email="linos.coding@gmail.com" },
 ]
-version = "0.1.0"
+version = "1.0.0"
 description = "When both YES and NO are existed. Only human with emotions can comprehend."
 readme = "README.md"
 requires-python = ">=3.14"
@@ -14,7 +14,7 @@ dependencies = [
     "stegano>=0.9.7",
 ]
 classifiers=[
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3.14",
     "Natural Language :: English",
     "Intended Audience :: Developers",
