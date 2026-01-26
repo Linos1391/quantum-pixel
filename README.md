@@ -63,7 +63,6 @@ flowchart LR
 
 **Notice:** it is still in development and not guaranteed protected from img2img. I tried on Grok some details are detected, most are NOT :D.
 
-
 ## 1.1. Web service
 
 Really slow so be patient!

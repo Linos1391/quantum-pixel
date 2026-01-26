@@ -3,7 +3,7 @@ name: render-md-mermaid
 on:
   push:
     paths:
-      - '**.md'
+      - 'README.md'
 
 jobs:
   render-md-mermaid:
