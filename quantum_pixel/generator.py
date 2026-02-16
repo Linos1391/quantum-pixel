@@ -23,9 +23,7 @@ class Generator:
         self._remain_allowance: int = -1
 
     def receive_current_progress(self):
-        """
-        Receive the current progress, this print out the percentage of completion. Dont know if really need.
-        """
+        """This print out the percentage of completion. Dont know if really need."""
         return int(100*(1-self._remain_allowance/self._allowance))
 
     def _generate(self, image_data: np.ndarray, remove_interacted_data: bool):
@@ -78,11 +76,5 @@ class Generator:
         return self._generate(self.img_data, False)
 
 if __name__ == "__main__":
-    generator = Generator("material.png")
-
-    # for i, img in enumerate(generator.separate(2)):
-    #     img.save(f"layer_{i}.png", optimize=True)
-
-
-
-    # generator.preview(0.5).save("preview.png", optimize=True)
+    generator = Generator("assets/material.png")
+    generator.preview(0.5).save("assets/mask.png", optimize=True)

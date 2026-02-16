@@ -43,6 +43,7 @@
 I made this in response of AI slop. Those so-called AI artists had gone too far that annoy me... I am not against the development of AI, but the disrespects towards ARTS and ARTISTS.
 
 ![rendered mermaid](assets/mermaid.png)
+<!-- Change from "assets/mermaid.png" to "https://github.com/Linos1391/quantum-pixel/blob/master/assets/mermaid.png?raw=true" in `quantum_pixel/README_PYPI.md` -->
 <details>
   <summary>Mermaid source</summary>
 
