@@ -3,53 +3,50 @@
 Do what is needed to be done.
 """
 
-from io import BytesIO
-from base64 import b85encode, b85decode
-
-from PIL import Image
-import stegano
+from stegano import stegano
 
 class Steganography:
-    """Encode and decode. [This will be upgraded to prevent computer-lizing]"""
+    """Encode and decode."""
     @classmethod
-    def encode(cls, preview: Image.Image, data: Image.Image, path: str) -> bool:
+    def encode(cls, password: str,
+               input_file_path: str,
+               output_file_path: str,
+               disguised_file_path: str) -> str:
         """
         Encoder.
 
         Args:
-            preview (Image.Image): Preview image.
-            data (Image.Image): The real image that got hidden.
-            path (str): The path the encoded image is saved into.
+            password (str): Password for the steganography.
+            input_file_path (str): The image will be embedded.
+            output_file_path (str): Where the output is.
+            disguised_file_path (str): The disguised image file data.
 
         Returns:
-            bool: operate successfully.
+            str: Error if there is, will be "" if success. (Use `if` to check!)
         """
         try:
-            buffered = BytesIO()
-            data.save(buffered, format="webp")
-            encoded_data = b85encode(buffered.getvalue()).decode()
-            stegano.lsb.hide(preview, encoded_data).save(path)
-            return True
-        except (ValueError, TypeError):
-            return False
+            stegano.encode(password, input_file_path, output_file_path, disguised_file_path)
+            return ""
+        except OSError as err:
+            return err.strerror
 
     @classmethod
-    def decode(cls, decoded_image: Image.Image, path: str) -> bool:
+    def decode(cls, password: str,
+               disguise_image: str,
+               output_folder: str) -> str:
         """
         Decoder.
 
         Args:
-            decoded_image (Image.Image): Decoded image.
-            path (str): The path then hidden image is saved into.
+            password (str): Password for the steganography.
+            disguise_image (str): The image will be decoded.
+            output_folder (str): Where the output is (THIS IS FOLDER).
         
         Returns:
             bool: operate successfully.
         """
         try:
-            Image.open(BytesIO(b85decode(stegano.lsb.reveal(decoded_image)))).save(path)
-            return True
-        except (ValueError, TypeError):
-            return False
-
-if __name__ == "__main__":
-    Steganography.encode(Image.open("preview.png"), Image.open("material.png"), "steganography.png")
+            stegano.decode(password, disguise_image, output_folder)
+            return ""
+        except OSError as err:
+            return err.strerror
