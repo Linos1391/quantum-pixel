@@ -268,8 +268,3 @@ async def remove(uid: str):
     task = background_task.get(uid)
     if task:
         task.cancel()
-
-
-#TODO
-# - fix rust panic
-# - update all assets

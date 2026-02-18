@@ -79,10 +79,17 @@ git clone https://github.com/Linos1391/quantum-pixel.git
 cd quantum-pixel
 ```
 
-| uv (recommended)                                   | python                            |
-| -------------------------------------------------- | --------------------------------- |
-| `uv sync --locked --no-dev && uv cache prune --ci` | `pip install -r requirements.txt` |
-| `uv run -- uvicorn src.web:app --host 0.0.0.0`     | `fastapi run src`                 |
+**Recommend UV & Rust (`pip install` is broken for some reasons)**
+
+*(Please install Rust beforehand)*
+
+```
+uv sync --locked --no-dev
+uv cache prune --ci
+uv tool install maturin
+maturin develop --release
+uv run fastapi run quantum_pixel
+```
 
 <br>
 

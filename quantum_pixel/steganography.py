@@ -4,7 +4,7 @@
 Do what is needed to be done.
 """
 
-from stegano import stegano
+from . import stegano
 
 class Steganography:
     """Encode and decode."""
