@@ -1,0 +1,16 @@
+# Exported from Render on 2026-02-18T18:34:44Z
+version: "1"
+projects:
+- name: Quantum Pixel
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: quantum_pixel
+      runtime: python
+      repo: https://github.com/Linos1391/quantum-pixel
+      plan: free
+      region: oregon
+      buildCommand: pip install quantum-pixel
+      startCommand: python -m quantum_pixel.main
+      autoDeployTrigger: checksPass
