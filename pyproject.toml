@@ -27,3 +27,6 @@ classifiers=[
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
+
+[tool.maturin]
+module-name = "quantum_pixel.stegano"
