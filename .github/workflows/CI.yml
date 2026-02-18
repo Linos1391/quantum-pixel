@@ -53,6 +53,9 @@ jobs:
         with:
           name: wheels-linux-${{ matrix.platform.target }}
           path: dist
+      - name: Test Render website host
+        timeout-minutes: 1
+        run: pip install dist/wheels-linux-${{ matrix.platform.target }}.whl && python -m quantum_pixel.main test
 
   musllinux:
     runs-on: ${{ matrix.platform.runner }}
@@ -84,6 +87,9 @@ jobs:
         with:
           name: wheels-musllinux-${{ matrix.platform.target }}
           path: dist
+      - name: Test Render website host
+        timeout-minutes: 1
+        run: pip install dist/wheels-linux-${{ matrix.platform.target }}.whl && python -m quantum_pixel.main test
 
   windows:
     runs-on: ${{ matrix.platform.runner }}
@@ -116,6 +122,9 @@ jobs:
         with:
           name: wheels-windows-${{ matrix.platform.target }}
           path: dist
+      - name: Test Render website host
+        timeout-minutes: 1
+        run: pip install dist/wheels-linux-${{ matrix.platform.target }}.whl && python -m quantum_pixel.main test
 
   macos:
     runs-on: ${{ matrix.platform.runner }}
@@ -142,6 +151,9 @@ jobs:
         with:
           name: wheels-macos-${{ matrix.platform.target }}
           path: dist
+      - name: Test Render website host
+        timeout-minutes: 1
+        run: pip install dist/wheels-linux-${{ matrix.platform.target }}.whl && python -m quantum_pixel.main test
 
   sdist:
     runs-on: ubuntu-latest
@@ -157,6 +169,9 @@ jobs:
         with:
           name: wheels-sdist
           path: dist
+      - name: Test Render website host
+        timeout-minutes: 1
+        run: pip install dist/wheels-linux-${{ matrix.platform.target }}.whl && python -m quantum_pixel.main test
 
   release:
     name: Release
