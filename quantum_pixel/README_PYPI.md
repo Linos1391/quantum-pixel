@@ -49,17 +49,16 @@ I made this in response of AI slop. Those so-called AI artists had gone too far 
 
 ```mermaid
 flowchart LR
-  Material[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/material.png?raw=true" width="50" height="100"/><br><label>material.png</label>]
-  Preview[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/preview.png?raw=true" width="50" height="100"/><br><label>preview.png</label>]
-  Encoded[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/encoded.png?raw=true" width="50" height="100"/><br><label>encoded.png</label>]
-  Grok[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/grok.png?raw=true" width="50" height="100"/><br><label>grok.png</label>]
+  A[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/material.png?raw=true" width="50" height="100"/><br><label>material.png</label>]
+  B[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/preview.png?raw=true" width="50" height="100"/><br><label>preview.png</label>]
+  C[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/encoded.png?raw=true" width="50" height="100"/><br><label>encoded.png</label>]
+  D[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/grok.png?raw=true" width="50" height="100"/><br><label>grok.png</label>]
 
-  Material -->|Built-in Generate Preview| Preview
-  Material -->|Embed Within Steganography| Encoded
-  Preview -->|Encode Steganography| Encoded
-  Encoded -->|Decode Steganography| Material
-  Encoded -->|Resize Optionally| Encoded
-  Encoded -->|Edit by Grok| Grok
+  A -->|Built-in Generate Preview| B
+  A -->|Embed Within Steganography| C
+  B -->|Encode Steganography| C
+  C -->|Decode Steganography| A
+  C -->|Edit by Grok| D
 ```
 
 </details>
