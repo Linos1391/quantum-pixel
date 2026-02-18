@@ -30,7 +30,7 @@
 
 - [1. Introduction](#1-introduction)
   - [1.1. Web service](#11-web-service)
-  - [1.2. Local system](#12-local-system)
+  - [1.2. Local system / Render](#12-local-system--render)
 - [2. Can I host from Github?](#2-can-i-host-from-github)
 - [3. License](#3-license)
 - [4. Disclaimer](#4-disclaimer)
@@ -72,24 +72,15 @@ flowchart LR
 Really slow so be patient!
 - [quantum-pixel.onrender.com/](https://quantum-pixel.onrender.com/)
 
-## 1.2. Local system
+## 1.2. Local system / Render
 
 ```
-git clone https://github.com/Linos1391/quantum-pixel.git
-cd quantum-pixel
+pip install quantum-pixel
+python -m quantum_pixel.main
 ```
 
-**Recommend UV & Rust (`pip install` is broken for some reasons)**
+*(If you use `uv`, just add `uv run` before each line)*
 
-*(Please install Rust beforehand)*
-
-```
-uv sync --locked --no-dev
-uv cache prune --ci
-uv tool install maturin
-maturin develop --release
-uv run fastapi run quantum_pixel
-```
 
 <br>
 
