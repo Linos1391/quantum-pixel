@@ -22,9 +22,7 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const fd = new FormData(form);
-            const save_path = crypto.randomUUID() + ".png";
             const selected = document.querySelector('#tabs-headers .tab-btn.active').dataset.target;
-            fd.append('save_path', save_path);
             fd.append('selected', selected);
 
             const result = document.querySelector(`#${selected} #result`)
@@ -35,8 +33,20 @@
                     method: 'POST',
                     body: fd
                 });
-                const text = await r.text();
-                result.innerHTML = text;
+                const json = await r.json();
+                
+                if (json.error) {
+                    const error = document.getElementById("error");
+                    error.style.display = "";
+                    error.innerHTML = json.error;
+                } else {
+                    error.style.display = "none";
+                }
+
+                if (json.result) {
+                    result.style.display = "";
+                    result.innerHTML = json.result;
+                }
             } catch (err) {
                 console.error(err);
             }

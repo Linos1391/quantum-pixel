@@ -10,24 +10,19 @@
         <main class="container">
             <h1>Decoding Image</h1>
 
-            {% if error %}
-                <div class="error">
-                    <p>{{ error }}</p>
-                    <p><a href="/">Return to Home</a></p>
-                </div>
-            {% elif filename %}
-                <p>This will be deleted later, please download immediately.</p>
-                <div class="preview">
-                    <img id="uploaded-image" src="/static/images/{{ filename }}" alt="uploaded image">
-                    <br>
-                    <br>
-                    <a class="primary" href="/static/images/{{ filename }}" download="decode.png">Download</a>   
-                </div>
-            {% else %}
-                <div class="preview">
-                    Loading, please wait patiently. (If the wait time is too long, it is recommended to use the local version.)
-                </div>
-            {% endif %}
+            <section id="options-panel" class="options-panel">
+                <form class="panel-controls" enctype="multipart/form-data">
+                    <div>
+                        <label>Password (Leave blank if don't use)</label>
+                        <input name="password" type="password"/>
+                    </div>
+                    <button id="apply-btn" class="actions">Submit</button>
+                </form>
+            </section>
+
+            <div id="error" style="display: none;">{{ error | safe }}</div>
+
+            <div id="result" style="display: none;"></div>
         </main>
     </body>
     <script src="/static/decode.js"></script>

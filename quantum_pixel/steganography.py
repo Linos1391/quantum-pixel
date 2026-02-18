@@ -1,4 +1,5 @@
-# cspell:ignore stegano, computer-lizing
+# cspell: ignore stegano, computer-lizing
+# pylint: disable=I1101:c-extension-no-member
 """
 Do what is needed to be done.
 """
@@ -28,7 +29,7 @@ class Steganography:
             stegano.encode(password, input_file_path, output_file_path, disguised_file_path)
             return ""
         except OSError as err:
-            return err.strerror
+            return str(err)
 
     @classmethod
     def decode(cls, password: str,
@@ -49,4 +50,4 @@ class Steganography:
             stegano.decode(password, disguise_image, output_folder)
             return ""
         except OSError as err:
-            return err.strerror
+            return str(err)

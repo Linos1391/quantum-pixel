@@ -10,16 +10,11 @@
         <main class="container">
             <h1>Encoding Image</h1>
 
-            {% if error %}
-                <div class="error">
-                    <p>{{ error }}</p>
-                    <p><a href="/">Return to Home</a></p>
-                </div>
-            {% endif %}
-
             <div class="preview">
                 <img id="uploaded-image" src="/static/images/{{ uid }}/encode_input.png" alt="uploaded image">
             </div>
+
+            <div id="error" style="display: none;">{{ error | safe }}</div>
             
             <section id="options-panel" class="options-panel">
                 <h3>Options</h3>
@@ -27,6 +22,7 @@
                 <div class="tabs">
                     <div id="tabs-headers" role="tablist">
                         <button class="tab-btn active" role="tab" data-target="panel_preview">Create Preview</button>
+                        <button class="tab-btn" role="tab" data-target="panel_resize">Resize</button>
                         <button class="tab-btn" role="tab" data-target="panel_steganography">Steganography</button>
                     </div>
                     <div id="tabs-panels" class="tabs-panels">
@@ -39,18 +35,43 @@
                                 </div>
                                 <button id="apply-btn" class="actions primary">Apply</button>
                             </form>
-                            <div id="result">{{ preview | safe }}</div>
+                            <div id="result" style="display: none;"></div>
                         </div>
-                        <div id="panel_steganography" class="tab-panel" role="tabpanel", style="display:none;">
+
+                        <div id="panel_resize" class="tab-panel" role="tabpanel" style="display:none;">
+                            <div class="option-desc">Resize the image. (format hint: `width`x`length`)</div>
+                            <form class="panel-controls" enctype="multipart/form-data">
+                                <div>
+                                    <label>Chosen Image</label>
+                                    <input name="image" type="file" accept="image/*" required/>
+                                </div>
+                                <div>
+                                    <label>Width</label>
+                                    <input name="width" type="number" min="0" placeholder="(width pixel)" required/>
+                                </div>
+                                <div>
+                                    <label>Length</label>
+                                    <input name="length" type="number" min="0" placeholder="(length pixel)" required/>
+                                </div>
+                                <button id="apply-btn" class="actions primary">Apply</button>
+                            </form>
+                            <div id="result" style="display: none;"></div>
+                        </div>
+
+                        <div id="panel_steganography" class="tab-panel" role="tabpanel" style="display:none;">
                             <div class="option-desc">Encode the real image data within the disguise image.</div>
                             <form class="panel-controls" enctype="multipart/form-data">
                                 <div>
                                     <label>Disguise Image</label>
                                     <input name="disguise" type="file" accept="image/*" required/>
                                 </div>
+                                <div>
+                                    <label>Password (not required but recommend)</label>
+                                    <input name="password" type="password"/>
+                                </div>
                                 <button id="apply-btn" class="actions primary">Apply</button>
                             </form>
-                            <div id="result">{{ steganography | safe }}</div>
+                            <div id="result" style="display: none;"></div>
                         </div>
                     </div>
                 </div>

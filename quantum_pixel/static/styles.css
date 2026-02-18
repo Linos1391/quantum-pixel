@@ -49,7 +49,7 @@ button, .primary {
 .preview img { max-width: 100%; height: auto; border-radius: 6px; }
 
 /* --- Errors & Result --- */
-.error {
+#error {
     color: var(--error-text);
     background: var(--error-bg);
     padding: 0.5rem;
