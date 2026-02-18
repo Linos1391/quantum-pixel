@@ -1,4 +1,4 @@
-# Exported from Render on 2026-02-18T18:34:44Z
+# Exported from Render on 2026-02-18T23:47:47Z
 version: "1"
 projects:
 - name: Quantum Pixel
@@ -10,7 +10,13 @@ projects:
       runtime: python
       repo: https://github.com/Linos1391/quantum-pixel
       plan: free
+      envVars:
+      - key: PORT
+        value: 10000
+      - key: CARGO_HOME
+        value: /tmp/cargo-cache
       region: oregon
-      buildCommand: uv sync --locked --no-dev && uv cache prune --ci && uv tool install maturin && maturin develop --release
-      startCommand: uv run fastapi run quantum_pixel
+      buildCommand: uv sync --locked --no-dev && uv cache prune --ci && uv run pip
+        install maturin && uv run maturin develop --release
+      startCommand: uv run fastapi run quantum_pixel --host 0.0.0.0 --port $PORT
       autoDeployTrigger: checksPass
