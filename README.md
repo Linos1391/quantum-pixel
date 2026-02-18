@@ -18,7 +18,7 @@
 [python-shield]: https://img.shields.io/badge/python-3.14+-yellow
 [python-url]: https://www.python.org/downloads/
 
-<img alt="preview image" width="75%" src="https://github.com/Linos1391/quantum-pixel/blob/master/assets/preview.png?raw=true">
+<img alt="intro image" width="75%" src="https://github.com/Linos1391/quantum-pixel/blob/master/assets/intro.png?raw=true">
 </div>
 <br>
 
@@ -42,19 +42,23 @@
 
 I made this in response of AI slop. Those so-called AI artists had gone too far that annoy me... I am not against the development of AI, but the disrespects towards ARTS and ARTISTS.
 
+<!-- Change from "assets/mermaid.png" to "https://github.com/Linos1391/quantum-pixel/blob/master/assets/mermaid.png?raw=true" in `quantum_pixel/README_PYPI.md` -->
 ![rendered mermaid](assets/mermaid.png)
 <details>
   <summary>Mermaid source</summary>
 
 ```mermaid
 flowchart LR
-  A[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/material.jpeg?raw=true" width="50" height="100"/><br><label>material.jpeg</label>]
-  B[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/encoded.jpeg?raw=true" width="50" height="100"/><br><label>encoded.jpeg</label>]
-  C[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/grok.jpeg?raw=true" width="50" height="100"/><br><label>grok.jpeg</label>]
+  Material[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/material.png?raw=true" width="50" height="100"/><br><label>material.png</label>]
+  Preview[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/preview.png?raw=true" width="50" height="100"/><br><label>preview.png</label>]
+  Encoded[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/encoded.png?raw=true" width="50" height="100"/><br><label>encoded.png</label>]
+  Grok[<img src="https://github.com/Linos1391/quantum-pixel/blob/dev/assets/grok.png?raw=true" width="50" height="100"/><br><label>grok.png</label>]
 
-  A-->|Encode| B
-  B -->|Decode| A
-  B -->|Grok edited| C
+  Material -->|Built-in Generate Preview| Preview
+  Material -->|Embed Within Steganography| Encoded
+  Preview -->|Encode Steganography| Encoded
+  Encoded -->|Decode Steganography| Material
+  Encoded -->|Edit by Grok| Grok
 ```
 
 </details>

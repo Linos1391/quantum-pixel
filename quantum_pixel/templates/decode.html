@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>[QP] Decode Image</title>
+        <link rel="stylesheet" href="/static/styles.css">
+    </head>
+    <body>
+        <main class="container">
+            <h1>Decoding Image</h1>
+
+            <section id="options-panel" class="options-panel">
+                <form class="panel-controls" enctype="multipart/form-data">
+                    <div>
+                        <label>Password (Leave blank if don't use)</label>
+                        <input name="password" type="password"/>
+                    </div>
+                    <button id="apply-btn" class="actions">Submit</button>
+                </form>
+            </section>
+
+            <div id="error" style="display: none;">{{ error | safe }}</div>
+
+            <div id="result" style="display: none;"></div>
+        </main>
+    </body>
+    <script src="/static/decode.js"></script>
+</html>

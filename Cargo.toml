@@ -1,0 +1,18 @@
+[package]
+edition = "2024"
+name = "quantum-pixel"
+version = "1.1.0-alpha.0"
+authors = ["Linos1391 <linos.coding@gmail.com>"]
+description = "When both YES and NO are existed. Only human with emotions can comprehend."
+readme = "quantum_pixel/README_PYPI.md"
+repository = "https://github.com/Linos1391/quantum-pixel.git"
+license = "GNU General Public License v3 (GPLv3)"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "stegano"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = "0.28.1"
+stegano-core = "0.6.1"
