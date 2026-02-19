@@ -74,11 +74,11 @@ Really slow so be patient!
 
 ## 1.2. Local system
 
-*(Recommend `uv`)*
+*(Recommend `uv`, if not, just remove `uv run`)*
 
 ```
 uv run pip install quantum-pixel
-uv run python -m quantum_pixel.main
+uv run quantum_pixel
 ```
 
 
@@ -86,7 +86,7 @@ uv run python -m quantum_pixel.main
 
 # 2. Can I host from [Github](https://github.com/Linos1391/quantum-pixel)?
 
-- For private use or sharing with friends? Absolutely yes. I am using the free version of Render right now and totally recommend to try.
+- For private use or sharing with friends? Absolutely yes. I am using the free version of Render right now and totally recommend to try. Import `render.yml` as blueprint.
 
 - For your website? You may embed this project as it is and let it be entirely free.
 

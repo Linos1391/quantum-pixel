@@ -28,10 +28,14 @@ classifiers=[
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
 
+[project.scripts]
+quantum_pixel = "quantum_pixel.main:main"
+
 [tool.maturin]
 module-name = "quantum_pixel.stegano"
 
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
 ]
