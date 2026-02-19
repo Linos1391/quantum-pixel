@@ -1,12 +1,16 @@
 #Cspell:ignore getbbox
 """Pytest for the `steganography.py`"""
 
+import os
 import shutil
 
 import pytest
 from PIL import Image, ImageChops
 
 from quantum_pixel import Steganography
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(PROJECT_ROOT)
 
 def _same_image(img1: Image.Image, img2: Image.Image):
     return ImageChops.difference(img1, img2).getbbox() is None
