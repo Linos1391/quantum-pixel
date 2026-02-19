@@ -4,6 +4,8 @@
 Do what is needed to be done.
 """
 
+import os
+
 from . import stegano
 
 class Steganography:
@@ -26,6 +28,7 @@ class Steganography:
             str: Error if there is, will be "" if success. (Use `if` to check!)
         """
         try:
+            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
             stegano.encode(password, input_file_path, output_file_path, disguised_file_path)
             return ""
         except OSError as err:
@@ -47,6 +50,7 @@ class Steganography:
             bool: operate successfully.
         """
         try:
+            os.makedirs(output_folder, exist_ok=True)
             stegano.decode(password, disguise_image, output_folder)
             return ""
         except OSError as err:
