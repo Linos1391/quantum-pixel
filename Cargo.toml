@@ -1,11 +1,12 @@
 [package]
 edition = "2024"
 name = "quantum-pixel"
-version = "2.0.0"
-authors = ["Linos1391 <linos.coding@gmail.com>"]
+version = "2.0.0-alpha0"
+author = "Linos1391"
+author_email = "linos.coding@gmail.com"
 description = "When both YES and NO are existed. Only human with emotions can comprehend."
 readme = "quantum_pixel/README_PYPI.md"
-repository = "https://github.com/Linos1391/quantum-pixel.git"
+project_url = "https://github.com/Linos1391/quantum-pixel.git"
 license = "GNU General Public License v3 (GPLv3)"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
