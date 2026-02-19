@@ -30,7 +30,7 @@
 
 - [1. Introduction](#1-introduction)
   - [1.1. Web service](#11-web-service)
-  - [1.2. Local system / Render](#12-local-system--render)
+  - [1.2. Local system](#12-local-system)
 - [2. Can I host from Github?](#2-can-i-host-from-github)
 - [3. License](#3-license)
 - [4. Disclaimer](#4-disclaimer)
@@ -72,14 +72,14 @@ flowchart LR
 Really slow so be patient!
 - [quantum-pixel.onrender.com/](https://quantum-pixel.onrender.com/)
 
-## 1.2. Local system / Render
+## 1.2. Local system
+
+*(Recommend `uv`)*
 
 ```
-pip install quantum-pixel
-python -m quantum_pixel.main
+uv run pip install quantum-pixel
+uv run python -m quantum_pixel.main
 ```
-
-*(If you use `uv`, just add `uv run` before each line)*
 
 
 <br>
