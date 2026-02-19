@@ -15,7 +15,7 @@
 [latest-commit-url]: https://github.com/Linos1391/quantum-pixel/commits/master
 [pypi-shield]: https://img.shields.io/badge/pypi-quantum--pixel-blue
 [pypi-url]: https://pypi.org/project/quantum-pixel/
-[python-shield]: https://img.shields.io/badge/python-3.14+-yellow
+[python-shield]: https://img.shields.io/badge/python-3.12+-yellow
 [python-url]: https://www.python.org/downloads/
 
 <img alt="intro image" width="75%" src="https://github.com/Linos1391/quantum-pixel/blob/master/assets/intro.png?raw=true">
