@@ -5,12 +5,13 @@ import uuid
 import os
 import time
 import asyncio
+import json
 from concurrent.futures.thread import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -148,16 +149,18 @@ async def end_encode(request: Request, uid: str):
                                         _join_uid(uid, "encode_preview.png"))
                     future_item.add_done_callback(lambda _: _remove_from_list(uid))
                     background_task.update({uid: future_item})
-                    for _ in await future_item:
-                        pass #TODO - Implement progressing with StreamingResponse?
-                             # 1 - Dont have a life? X
-                             # 2 - being unemployed? X
-                             # ==> I guess not right now :(
-                    return JSONResponse(content={
-                        "result": templates.get_template("result.html").render({
+
+                    async def _progress_streaming():
+                        for progress in await future_item:
+                            yield f"{progress}\n"
+
+                        yield json.dumps({"result": templates.get_template("result.html").render({
                             "path": f"{uid}/encode_preview.png",
                             "download": "encode-preview",
                         })})
+
+                    return StreamingResponse(_progress_streaming(), media_type="text/plain")
+
                 except asyncio.exceptions.CancelledError:
                     return_error = "User exited."
                 except AssertionError as err:

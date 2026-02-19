@@ -4,6 +4,7 @@ Generating layers from an image file.
 """
 
 import logging
+import os
 from collections.abc import Generator as gen
 from random import shuffle, randint
 
@@ -68,6 +69,7 @@ class Generator:
                 layer[location][current_value] = value
                 self._remain_allowance -= value
                 yield int(100*(1-self._remain_allowance/self._allowance))
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         Image.fromarray(layer.astype(np.uint8), "RGB").save(output_path, optimize=True)
 
 if __name__ == "__main__":

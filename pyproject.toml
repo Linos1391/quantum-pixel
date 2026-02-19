@@ -30,3 +30,8 @@ classifiers=[
 
 [tool.maturin]
 module-name = "quantum_pixel.stegano"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
