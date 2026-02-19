@@ -25,7 +25,8 @@
             const selected = document.querySelector('#tabs-headers .tab-btn.active').dataset.target;
             fd.append('selected', selected);
 
-            const result = document.querySelector(`#${selected} #result`)
+            const result = document.querySelector(`#${selected} #result`);
+            result.style.display = "";
             result.textContent = 'Loading, please wait patiently.';
 
             try {
@@ -33,20 +34,45 @@
                     method: 'POST',
                     body: fd
                 });
-                const json = await r.json();
-                
-                if (json.error) {
-                    const error = document.getElementById("error");
-                    error.style.display = "";
-                    error.innerHTML = json.error;
-                } else {
-                    error.style.display = "none";
+
+                const reader = r.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = "";
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) {
+                        if (buffer.startsWith('{"result":') || buffer.startsWith('{"error":')) {
+                            const json = JSON.parse(buffer);
+
+                            const error = document.getElementById("error");
+                            if (json.error) {
+                                error.innerHTML = json.error;
+                            } else {
+                                error.style.display = "none";
+                            } 
+
+                            if (json.result) {
+                                result.innerHTML = json.result;
+                            }
+                        }
+                        break;
+                    };
+
+                    buffer += decoder.decode(value, { stream: true });
+
+                    if (buffer.startsWith('{"result":') || buffer.startsWith('{"error":')) {
+                        continue; // reserve pure json style.
+                    }
+
+                    const lines = buffer.split("\n");
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        result.textContent = `Progress: ${line}%`;
+                    }
                 }
 
-                if (json.result) {
-                    result.style.display = "";
-                    result.innerHTML = json.result;
-                }
             } catch (err) {
                 console.error(err);
             }
