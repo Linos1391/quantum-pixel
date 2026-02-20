@@ -773,7 +773,7 @@ dependencies = [
 
 [[package]]
 name = "quantum-pixel"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "pyo3",
  "stegano-core",

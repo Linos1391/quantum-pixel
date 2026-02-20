@@ -29,8 +29,8 @@
 <br>
 
 - [1. Introduction](#1-introduction)
-  - [1.1. Web service](#11-web-service)
-  - [1.2. Local system](#12-local-system)
+  - [1.1. Local system (RECOMMEND)](#11-local-system-recommend)
+  - [1.2. Web service (NOT RECOMMEND)](#12-web-service-not-recommend)
 - [2. Can I host from Github?](#2-can-i-host-from-github)
 - [3. License](#3-license)
 - [4. Disclaimer](#4-disclaimer)
@@ -67,20 +67,17 @@ flowchart LR
 
 **Notice:** it is still in development and not guaranteed protected from img2img. I tried on Grok some details are detected, most are NOT :D.
 
-## 1.1. Web service
+## 1.1. Local system (RECOMMEND)
 
-Really slow so be patient!
+| UV                                 | Python                      |
+| ---------------------------------- | --------------------------- |
+| `uv run pip install quantum-pixel` | `pip install quantum-pixel` |
+| `uv run quantum_pixel`             | `quantum_pixel`             |
+
+## 1.2. Web service (NOT RECOMMEND)
+
+Really slow and often exceed RAM limit.
 - [quantum-pixel.onrender.com/](https://quantum-pixel.onrender.com/)
-
-## 1.2. Local system
-
-*(Recommend `uv`)*
-
-```
-uv run pip install quantum-pixel
-uv run quantum_pixel
-```
-
 
 <br>
 
