@@ -69,10 +69,10 @@ flowchart LR
 
 ## 1.1. Web service
 
-Really slow so be patient!
+Really slow and often exceed RAM limit, not recommend.
 - [quantum-pixel.onrender.com/](https://quantum-pixel.onrender.com/)
 
-## 1.2. Local system
+## 1.2. Local system (Recommend)
 
 *(Recommend `uv`, if not, just remove `uv run`)*
 
