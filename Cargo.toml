@@ -1,7 +1,7 @@
 [package]
 edition = "2024"
 name = "quantum-pixel"
-version = "2.0.0-alpha0"
+version = "2.0.0"
 authors = ["Linos1391 <linos.coding@gmail.com>"]
 homepage = "https://github.com/Linos1391/quantum-pixel.git"
 description = "When both YES and NO are existed. Only human with emotions can comprehend."
