@@ -2,6 +2,8 @@
 
 <h1>Quantum Pixel</h1>
 
+<img src="https://raw.githubusercontent.com/Linos1391/quantum-pixel/bde7747758dd6f9a5fbd3fb06ce9a39528d348c6/quantum_pixel/static/favicon.svg" width="60%">
+
 **When everything is possibility.**
 
 [![][latest-release-shield]][latest-release-url]
