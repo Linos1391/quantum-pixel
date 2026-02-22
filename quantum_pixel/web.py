@@ -141,27 +141,19 @@ async def end_encode(request: Request, uid: str):
         case "panel_preview":
             if input_path and form.get("intensity"):
                 try:
-                    generator = Generator(input_path)
                     future_item = asyncio.get_event_loop().run_in_executor(executor,
-                            generator.preview_streaming if form.get("show") else generator.preview,
-                            float(form.get("intensity")), _join_uid(uid, "encode_preview.png"))
+                                    Generator(input_path).preview, float(form.get("intensity")),
+                                    _join_uid(uid, "encode_preview.png"))
                     future_item.add_done_callback(lambda _: _remove_from_list(uid))
                     background_task.update({uid: future_item})
 
-                    if form.get("show"):
-                        async def _progress_streaming():
-                            for progress in await future_item:
-                                yield f"{progress}\n"
-
-                            yield json.dumps({"result": templates.get_template("result.html")
+                    async def _progress_streaming():
+                        for progress in await future_item:
+                            yield f"{progress}\n"
+                        yield json.dumps({"result": templates.get_template("result.html")
                                         .render({"path": f"{uid}/encode_preview.png",
                                                  "download": "encode-preview",})})
                         return StreamingResponse(_progress_streaming(), media_type="text/plain")
-                    else:
-                        await future_item
-                        return JSONResponse(content={"result": templates.get_template("result.html")
-                                                     .render({"path": f"{uid}/encode_preview.png",
-                                                              "download": "encode-preview",})})
 
                 except asyncio.exceptions.CancelledError:
                     return_error = "User exited."
