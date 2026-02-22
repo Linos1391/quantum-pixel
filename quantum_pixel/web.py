@@ -153,7 +153,7 @@ async def end_encode(request: Request, uid: str):
                         yield json.dumps({"result": templates.get_template("result.html")
                                         .render({"path": f"{uid}/encode_preview.png",
                                                  "download": "encode-preview",})})
-                        return StreamingResponse(_progress_streaming(), media_type="text/plain")
+                    return StreamingResponse(_progress_streaming(), media_type="text/plain")
 
                 except asyncio.exceptions.CancelledError:
                     return_error = "User exited."
