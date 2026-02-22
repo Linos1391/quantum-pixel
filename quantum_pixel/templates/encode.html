@@ -15,7 +15,17 @@
                 <img id="uploaded-image" src="/static/images/{{ uid }}/encode_input.png" alt="uploaded image">
             </div>
 
-            <div id="error" style="display: none;">{{ error | safe }}</div>
+            <br>
+
+            {% if error %}
+                <div id="error">
+                    <h2>Error</h2>
+                    <p>{{ error }}</p>
+                    <p><a href="/">Return to Home</a></p>
+                </div>
+            {% else %}
+                <div id="error" style="display: none;"></div>
+            {% endif %}
             
             <section id="options-panel" class="options-panel">
                 <h3>Options</h3>

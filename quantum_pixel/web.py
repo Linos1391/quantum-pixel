@@ -6,6 +6,7 @@ import os
 import time
 import asyncio
 import json
+import types
 from concurrent.futures.thread import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 
@@ -120,9 +121,8 @@ async def start_encode(request: Request, uid: str):
     """Start the encode html."""
     if not os.path.exists(_join_uid(uid, "encode_input.png")):
         return templates.TemplateResponse("encode.html", {"request": request,
-                "error": templates.get_template("error.html").render({"error":
-                    ("The image file cannot be found, you might just exit and got auto cleanup! "
-                    "Otherwise, there might be an attack/error, please issue me if that's so.")})})
+            "error": ("The image file cannot be found, you might just exit and got auto cleanup! "
+                     "Otherwise, there might be an attack/error, please issue me if that's so.")})
     return templates.TemplateResponse("encode.html", {"request": request, "uid": uid})
 
 @app.post("/encode/{uid}")
@@ -144,12 +144,12 @@ async def end_encode(request: Request, uid: str):
                     future_item = asyncio.get_event_loop().run_in_executor(executor,
                                     Generator(input_path).preview, float(form.get("intensity")),
                                     _join_uid(uid, "encode_preview.png"))
-                    future_item.add_done_callback(lambda _: _remove_from_list(uid))
                     background_task.update({uid: future_item})
 
                     async def _progress_streaming():
                         for progress in await future_item:
                             yield f"{progress}\n"
+                        _remove_from_list(uid)
                         yield json.dumps({"result": templates.get_template("result.html")
                                         .render({"path": f"{uid}/encode_preview.png",
                                                  "download": "encode-preview",})})
@@ -162,14 +162,21 @@ async def end_encode(request: Request, uid: str):
 
         case "panel_resize":
             if input_path and form.get("image") and form.get("width") and form.get("length"):
-                Image.open(form.get("image").file)\
+                def _resize() -> None:
+                    Image.open(form.get("image").file)\
                             .resize((int(form.get("width")), int(form.get("length"))))\
                             .save(_join_uid(uid, "encode_resize.png"), optimize=True)
-                return JSONResponse(content={
-                        "result": templates.get_template("result.html").render({
-                            "path": f"{uid}/encode_resize.png",
-                            "download": "encode-resize",
-                        })})
+                try:
+                    future_item=asyncio.get_event_loop().run_in_executor(executor, _resize)
+                    background_task.update({uid: future_item})
+                    await future_item
+                    return JSONResponse(content={
+                            "result": templates.get_template("result.html").render({
+                                "path": f"{uid}/encode_resize.png",
+                                "download": "encode-resize",
+                            })})
+                except asyncio.exceptions.CancelledError:
+                    return_error = "User exited."
 
         case "panel_steganography":
             if input_path and form.get("disguise"):
@@ -206,9 +213,8 @@ async def start_decode(request: Request, uid: str):
     """Start the decode html."""
     if not os.path.exists(_join_uid(uid, "decode_input.png")):
         return templates.TemplateResponse("decode.html", {"request": request,
-                "error": templates.get_template("error.html").render({"error":
-                    ("The image file cannot be found, you might just exit and got auto cleanup! "
-                    "Otherwise, there might be an attack/error, please issue me if that's so.")})})
+            "error": ("The image file cannot be found, you might just exit and got auto cleanup! "
+                    "Otherwise, there might be an attack/error, please issue me if that's so.")})
     return templates.TemplateResponse("decode.html", {"request": request})
 
 @app.post("/decode/{uid}", response_class=JSONResponse)
@@ -262,6 +268,14 @@ async def end_decode(request: Request, uid: str):
 async def remove(uid: str):
     """Remove file when user exit."""    
     shutil.rmtree(os.path.join(IMAGE_DIR, uid), ignore_errors=True)
-    task = background_task.get(uid)
+    task: asyncio.Future = background_task.get(uid)
     if task:
-        task.cancel()
+        try:
+            result = task.result()
+            if isinstance(result, types.GeneratorType):
+                result.throw(asyncio.exceptions.CancelledError("Task cancelled."))
+                _remove_from_list(uid)
+            else:
+                task.cancel()
+        except (asyncio.exceptions.InvalidStateError, asyncio.exceptions.CancelledError):
+            task.cancel()
