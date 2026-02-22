@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="10.923425"
+   height="5.6823688"
+   viewBox="0 0 10.923425 5.6823688"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-1.4484824,-5.2396302)">
+    <path
+       d="M 11.745412,5.2403227 A 1.2037493,5.9814274 65.401706 0 0 6.4153604,6.8618214 1.2037493,5.9814274 65.401706 0 0 1.4709457,10.447752 1.2037493,5.9814274 65.401706 0 0 7.4050302,9.0581793 1.2037493,5.9814274 65.401706 0 0 12.349444,5.4722485 1.2037493,5.9814274 65.401706 0 0 11.745412,5.2403227 Z M 11.344035,5.5574863 A 0.88875543,5.4451774 65.406484 0 1 11.861496,5.694263 0.88875543,5.4451774 65.406484 0 1 7.275173,8.7707497 0.88875543,5.4451774 65.406484 0 1 1.9588944,10.225738 0.88875543,5.4451774 65.406484 0 1 6.5452176,7.149251 0.88875543,5.4451774 65.406484 0 1 11.344035,5.5574863 Z"
+       style="fill:#33087b;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       id="path7" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.2622px;font-family:Z003;-inkscape-font-specification:'Z003, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#f7ee56;fill-opacity:1;stroke:#777777;stroke-width:0.1;stroke-dasharray:none;stroke-opacity:1"
+       x="1.5044148"
+       y="10.227339"
+       id="text5"
+       transform="scale(1.0682873,0.93607778)"><tspan
+         x="1.5044148"
+         y="10.227339"
+         id="tspan6"
+         style="fill:#f7ee56;fill-opacity:1;stroke:#777777;stroke-width:0.1;stroke-dasharray:none;stroke-opacity:1">QP</tspan></text>
+    <path
+       d="M 12.357315,5.4920713 11.871334,5.729944 A 0.88875543,5.4451774 65.406484 0 1 7.275173,8.7707497 0.88875543,5.4451774 65.406484 0 1 2.362239,10.366479 L 1.7857513,10.647962 A 1.2037493,5.9814274 65.401706 0 0 7.4050302,9.0581793 1.2037493,5.9814274 65.401706 0 0 12.357315,5.4920713 Z"
+       style="fill:#33087b;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+       id="path8" />
+  </g>
+</svg>
