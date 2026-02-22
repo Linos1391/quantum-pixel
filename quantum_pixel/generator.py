@@ -28,12 +28,49 @@ class Generator:
         """This print out the percentage of completion. Dont know if really need."""
         return int(100*(1-self._remain_allowance/self._allowance))
 
-    def preview(self, intensity: float, output_path: str, streaming: bool) -> gen[int]:
+    def preview(self, intensity: float, output_path: str) -> None:
         """
-        Generate the preview layer.
+        Generate the preview layer AND DO NOT STREAM.
+        ```
+        Generator("Path/to/image.png").preview(0.5, "Path/to/output/image.png"):
+        ```
+
+        Args:
+            intensity (float): the amount of pixel being taken (0-1). The smaller it is, the \
+                faster to process, the harder to visualize. (AI may have the stroke, and so \
+                human's eyes)
+            output_path (str): Where the file should be saved at.
+        """
+        assert 0 <= intensity <= 1, "Invalid intensity"
+
+        # [[i, j] for i in range(img_data.shape[0]) for j in range(img_data.shape[1])]
+        available_location = np.stack(np.meshgrid(np.arange(self.img_data.shape[0]),
+            np.arange(self.img_data.shape[1])), axis=-1).reshape(-1, 2).tolist()
+        shuffle(available_location)
+
+        # do the shit.
+        self._allowance = int(int(np.sum(self.img_data) * intensity))
+        self._remain_allowance = self._allowance
+
+        layer: np.ndarray = np.zeros_like(self.img_data)
+        while self._remain_allowance > 0:
+            try:
+                location = tuple(available_location.pop())
+            except IndexError:
+                break
+            for current_value in range(3): # RGBA channels
+                value=min(randint(0, self.img_data[location][current_value]),self._remain_allowance)
+                layer[location][current_value] = value
+                self._remain_allowance -= value
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        Image.fromarray(layer.astype(np.uint8), "RGB").save(output_path, optimize=True)
+
+    def preview_streaming(self, intensity: float, output_path: str) -> gen[int]:
+        """
+        Generate the preview layer AND STREAM PROGRESS OUT.
         ```
         generator = Generator("Path/to/image.png")
-        for progress in generator.preview(0.5, "Path/to/output/image.png", True):
+        for progress in generator.preview_streaming(0.5, "Path/to/output/image.png"):
             print(progress)
         ```
 
@@ -43,7 +80,6 @@ class Generator:
                 faster to process, the harder to visualize. (AI may have the stroke, and so \
                 human's eyes)
             output_path (str): Where the file should be saved at.
-            streaming (bool): Do you want to show progress.
 
         Returns:
             collections.abc.Generator[int]: The percentage of completion.
@@ -69,12 +105,11 @@ class Generator:
                 value=min(randint(0, self.img_data[location][current_value]),self._remain_allowance)
                 layer[location][current_value] = value
                 self._remain_allowance -= value
-                if streaming:
-                    yield int(100*(1-self._remain_allowance/self._allowance))
+                yield int(100*(1-self._remain_allowance/self._allowance))
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         Image.fromarray(layer.astype(np.uint8), "RGB").save(output_path, optimize=True)
 
 if __name__ == "__main__":
     generator = Generator("assets/material.png")
-    for progress in generator.preview(0.5, "assets/preview.png", True):
+    for progress in generator.preview_streaming(0.5, "assets/preview.png"):
         print(progress)
