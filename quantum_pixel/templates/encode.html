@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
         <title>[QP] Encode Image</title>
         <link rel="stylesheet" href="/static/styles.css">
     </head>
@@ -32,6 +33,10 @@
                                 <div>
                                     <label>Intensity</label>
                                     <input name="intensity" type="number" min="0" max="1" step="0.01" placeholder="(decimal from 0 to 1)" required/>
+                                </div>
+                                <div>
+                                    <label>Show progress (NEVER ENABLE THIS ON RENDER. Keep track of progress, consume RAM though.)</label>
+                                    <input name="show_progress" type="checkbox"/>
                                 </div>
                                 <button id="apply-btn" class="actions primary">Apply</button>
                             </form>

@@ -101,10 +101,6 @@ async def upload(request: Request):
     if file.size > 1_073_741_824:
         return templates.TemplateResponse("index.html",
                                           {"request": request, "error": "File should be <1GB."})
-    _, ext = os.path.splitext(file.filename)
-    if ext.lower() not in (".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"):
-        return templates.TemplateResponse("index.html",
-                                          {"request": request, "error": "Unsupported file type."})
 
     while True: # Guarantee an individualized uid.
         uid = uuid.uuid4().hex
@@ -115,7 +111,8 @@ async def upload(request: Request):
             continue
 
     upload_type = form.get("upload_type")
-    Image.open(file.file).save(_join_uid(uid, f"{upload_type}_input.png"), optimize=True)
+    with open(_join_uid(uid, f"{upload_type}_input.png"), "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
     return RedirectResponse(f"/{upload_type}/{uid}", status_code=303)
 
 @app.get("/encode/{uid}", response_class=HTMLResponse)
@@ -150,16 +147,21 @@ async def end_encode(request: Request, uid: str):
                     future_item.add_done_callback(lambda _: _remove_from_list(uid))
                     background_task.update({uid: future_item})
 
-                    async def _progress_streaming():
-                        for progress in await future_item:
-                            yield f"{progress}\n"
+                    if form.get("show_progress"):
+                        async def _progress_streaming():
+                            for progress in await future_item:
+                                yield f"{progress}\n"
 
-                        yield json.dumps({"result": templates.get_template("result.html").render({
-                            "path": f"{uid}/encode_preview.png",
-                            "download": "encode-preview",
-                        })})
-
-                    return StreamingResponse(_progress_streaming(), media_type="text/plain")
+                            yield json.dumps({"result": templates.get_template("result.html")
+                                        .render({"path": f"{uid}/encode_preview.png",
+                                                 "download": "encode-preview",})})
+                        return StreamingResponse(_progress_streaming(), media_type="text/plain")
+                    else:
+                        for _ in await future_item:
+                            pass
+                        return JSONResponse(content={"result": templates.get_template("result.html")
+                                                     .render({"path": f"{uid}/encode_preview.png",
+                                                              "download": "encode-preview",})})
 
                 except asyncio.exceptions.CancelledError:
                     return_error = "User exited."

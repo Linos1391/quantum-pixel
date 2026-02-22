@@ -3,19 +3,20 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
         <title>[QP] Upload Image</title>
         <link rel="stylesheet" href="/static/styles.css">
     </head>
     <body>
         <main class="container">
-            <h1>Upload an Image</h1>
+            <h1>Upload an Image (Only accept PNG)</h1>
 
             {% if error %}
                 <div class="error">{{ error }}</div>
             {% endif %}
 
             <form class="upload-form" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept="image/*" required>
+                <input type="file" name="file" accept="image/png" required>
                 <button type="submit" name="upload_type" value="encode">Encode</button>
                 <button type="submit" name="upload_type" value="decode">Decode</button>
             </form>
