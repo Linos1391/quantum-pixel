@@ -28,12 +28,12 @@ class Generator:
         """This print out the percentage of completion. Dont know if really need."""
         return int(100*(1-self._remain_allowance/self._allowance))
 
-    def preview(self, intensity: float, output_path: str) -> gen[int]:
+    def preview(self, intensity: float, output_path: str, streaming: bool) -> gen[int]:
         """
         Generate the preview layer.
         ```
         generator = Generator("Path/to/image.png")
-        for progress in generator.preview(0.5, "Path/to/output/image.png"):
+        for progress in generator.preview(0.5, "Path/to/output/image.png", True):
             print(progress)
         ```
 
@@ -43,6 +43,7 @@ class Generator:
                 faster to process, the harder to visualize. (AI may have the stroke, and so \
                 human's eyes)
             output_path (str): Where the file should be saved at.
+            streaming (bool): Do you want to show progress.
 
         Returns:
             collections.abc.Generator[int]: The percentage of completion.
@@ -68,11 +69,12 @@ class Generator:
                 value=min(randint(0, self.img_data[location][current_value]),self._remain_allowance)
                 layer[location][current_value] = value
                 self._remain_allowance -= value
-                yield int(100*(1-self._remain_allowance/self._allowance))
+                if streaming:
+                    yield int(100*(1-self._remain_allowance/self._allowance))
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         Image.fromarray(layer.astype(np.uint8), "RGB").save(output_path, optimize=True)
 
 if __name__ == "__main__":
     generator = Generator("assets/material.png")
-    for progress in generator.preview(0.5, "assets/preview.png"):
+    for progress in generator.preview(0.5, "assets/preview.png", True):
         print(progress)

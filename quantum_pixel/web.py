@@ -142,8 +142,8 @@ async def end_encode(request: Request, uid: str):
             if input_path and form.get("intensity"):
                 try:
                     future_item = asyncio.get_event_loop().run_in_executor(executor,
-                                        Generator(input_path).preview, float(form.get("intensity")),
-                                        _join_uid(uid, "encode_preview.png"))
+                            Generator(input_path).preview, float(form.get("intensity")),
+                            _join_uid(uid, "encode_preview.png"), bool(form.get("show_progress")))
                     future_item.add_done_callback(lambda _: _remove_from_list(uid))
                     background_task.update({uid: future_item})
 
