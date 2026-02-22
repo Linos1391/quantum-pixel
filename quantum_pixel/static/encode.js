@@ -29,10 +29,12 @@
             result.style.display = "";
             result.textContent = 'Loading, please wait patiently.';
 
+            const TIMEOUT = 300_000; // 5 minutes - NodeJS default anyway.
             try {
                 const r = await fetch(location.pathname, {
                     method: 'POST',
-                    body: fd
+                    body: fd,
+                    signal: AbortSignal.timeout(TIMEOUT)
                 });
 
                 const reader = r.body.getReader();
@@ -47,6 +49,7 @@
 
                             const error = document.getElementById("error");
                             if (json.error) {
+                                error.style.display = "";
                                 error.innerHTML = json.error;
                             } else {
                                 error.style.display = "none";
@@ -74,7 +77,13 @@
                 }
 
             } catch (err) {
-                console.error(err);
+                if (err.name.startsWith("TimeoutError") || err.name.startsWith("AbortError")) {
+                    const error = document.getElementById("error");
+                    error.style.display = "";
+                    error.innerHTML = "TimeoutError: The system has reach timeout of 5 minutes. This might be due to RAM limit exceed, use local system instead.";
+                } else {
+                    console.error(err);
+                }
             }
         });
     })
@@ -87,3 +96,7 @@
         });
     });
 })();
+
+
+// TODO
+// - error did not display initially! --> error.html wraps everything.
