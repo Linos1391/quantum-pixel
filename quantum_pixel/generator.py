@@ -7,7 +7,7 @@ import logging
 import os
 from collections.abc import Generator as gen
 import asyncio
-from random import shuffle, randint
+from random import randint
 
 import numpy as np
 from PIL import Image
@@ -31,7 +31,14 @@ class Generator:
         ```
         generator = Generator("Path/to/image.png")
         for progress in generator.preview(0.5, "Path/to/output/image.png"):
-            print(progress)
+            print(progress, end='\r')
+        ```
+
+        or if you don't need progress:
+
+        ```
+        for _ in generator.preview(0.5, "Path/to/output/image.png"):
+            pass
         ```
 
 
@@ -49,17 +56,20 @@ class Generator:
         try:
             # [[i, j] for i in range(img_data.shape[0]) for j in range(img_data.shape[1])]
             available_location = np.stack(np.meshgrid(np.arange(self.img_data.shape[0]),
-                np.arange(self.img_data.shape[1])), axis=-1).reshape(-1, 2).tolist()
-            shuffle(available_location)
+                np.arange(self.img_data.shape[1])), axis=-1).reshape(-1, 2)
+            np.random.shuffle(available_location)
 
             # do the shit.
             self._allowance = int(int(np.sum(self.img_data) * intensity))
             self._remain_allowance = self._allowance
 
             layer: np.ndarray = np.zeros_like(self.img_data)
+            index = 0
             while self._remain_allowance > 0:
                 try:
-                    location = tuple(available_location.pop())
+                    location = tuple(available_location[index].tolist())
+                    index += 1
+                    print(self._remain_allowance, end="\r")
                 except IndexError:
                     break
                 for current_value in range(3): # RGBA channels
@@ -75,5 +85,5 @@ class Generator:
 
 if __name__ == "__main__":
     generator = Generator("assets/material.png")
-    for progress in generator.preview(0.5, "assets/preview.png"):
-        print(progress)
+    for progress in generator.preview(0.5, "output/output.png"):
+        print(progress, end='\r')
