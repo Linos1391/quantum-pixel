@@ -29,7 +29,7 @@
             result.style.display = "";
             result.textContent = 'Loading, please wait patiently.';
 
-            const TIMEOUT = 300_000; // 5 minutes - NodeJS default anyway.
+            const TIMEOUT = 1_800_000; // 30 minutes.
             try {
                 const r = await fetch(location.pathname, {
                     method: 'POST',
