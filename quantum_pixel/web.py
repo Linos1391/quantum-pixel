@@ -188,6 +188,8 @@ async def end_encode(request: Request, uid: str):
                                 "path": f"{uid}/encode_resize.png",
                                 "download": "encode-resize",
                             })})
+                except UnidentifiedImageError:
+                    return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
                     pass
 
@@ -221,6 +223,8 @@ async def end_encode(request: Request, uid: str):
                             "path": f"{uid}/encode_steganography.png",
                             "download": "encode-steganography",
                         })})
+                except UnidentifiedImageError:
+                    return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
                     pass
 
