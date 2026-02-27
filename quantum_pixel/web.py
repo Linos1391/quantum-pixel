@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -88,33 +88,36 @@ async def start(request: Request):
     """A default start on app."""
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.post("/", response_class=RedirectResponse)
+@app.post("/", response_class=JSONResponse)
 async def upload(request: Request):
     """Upload the file, then encode or decode depend on selection."""
-    form = await request.form()
-    file = form.get("file")
+    try:
+        form = await request.form()
+        file = form.get("file")
 
-    if not file or not form.get("upload_type"):
-        return templates.TemplateResponse("index.html",
-                                          {"request": request, "error": "Unable to load form."})
+        if not file or not form.get("upload_type"):
+            return JSONResponse(content={"error": "Unable to load form."})
 
-    # Im poor u know lol. You can delete this line, just acknowledge your cpu power.
-    if file.size > 1_073_741_824:
-        return templates.TemplateResponse("index.html",
-                                          {"request": request, "error": "File should be <1GB."})
+        # Im poor u know lol. You can delete this line, just acknowledge your cpu power.
+        if file.size > 1_073_741_824:
+            return JSONResponse(content={"error": "File should be <1GB."})
 
-    while True: # Guarantee an individualized uid.
-        uid = uuid.uuid4().hex
-        try:
-            os.mkdir(os.path.join(IMAGE_DIR, uid))
-            break
-        except FileExistsError:
-            continue
+        while True: # Guarantee an individualized uid.
+            uid = uuid.uuid4().hex
+            try:
+                os.mkdir(os.path.join(IMAGE_DIR, uid))
+                break
+            except FileExistsError:
+                continue
 
-    upload_type = form.get("upload_type")
-    with open(_join_uid(uid, f"{upload_type}_input.png"), "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    return RedirectResponse(f"/{upload_type}/{uid}", status_code=303)
+        upload_type = form.get("upload_type")
+        img = Image.open(file.file)
+        img = await asyncio.get_event_loop().run_in_executor(executor, img.convert, "RGB")
+        await asyncio.get_event_loop().run_in_executor(executor, img.save,
+                                                _join_uid(uid, f"{upload_type}_input.png"))
+        return JSONResponse(content={"redirect": f"/{upload_type}/{uid}"})
+    except asyncio.exceptions.CancelledError:
+        pass
 
 @app.get("/encode/{uid}", response_class=HTMLResponse)
 async def start_encode(request: Request, uid: str):
