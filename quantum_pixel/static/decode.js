@@ -38,6 +38,10 @@
 
     // remove file when user left.
     window.addEventListener('beforeunload', () => {
+        const error = document.getElementById("error");
+        error.style.display = "";
+        error.innerHTML = "ExitError: You just exit and got auto cleanup!";
+
         fetch(`/remove/${location.pathname.split("/").pop()}`, {
             method: 'POST',
             keepalive: true

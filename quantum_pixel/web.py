@@ -156,7 +156,7 @@ async def end_encode(request: Request, uid: str):
                     return StreamingResponse(_progress_streaming(), media_type="text/plain")
 
                 except asyncio.exceptions.CancelledError:
-                    return_error = "User exited."
+                    pass
                 except AssertionError as err:
                     return_error = err
 
@@ -176,7 +176,7 @@ async def end_encode(request: Request, uid: str):
                                 "download": "encode-resize",
                             })})
                 except asyncio.exceptions.CancelledError:
-                    return_error = "User exited."
+                    pass
 
         case "panel_steganography":
             if input_path and form.get("disguise"):
@@ -199,7 +199,7 @@ async def end_encode(request: Request, uid: str):
                             "download": "encode-steganography",
                         })})
                 except asyncio.exceptions.CancelledError:
-                    return_error = "User exited."
+                    pass
 
         case _:
             return_error = "Unable to load form."
@@ -258,10 +258,10 @@ async def end_decode(request: Request, uid: str):
                     except UnidentifiedImageError:
                         continue
             return_error = "There is no readable image within the encoded file."
-    except asyncio.exceptions.CancelledError:
-        return_error = "User exited."
     except BaseException as err: #pylint: disable=W0718:broad-exception-caught
         return_error = f"This error usually occurs when the image is not encoded from here: {err}"
+    except asyncio.exceptions.CancelledError:
+        pass
     return {"error": templates.get_template("error.html").render({"error": return_error})}
 
 @app.post("/remove/{uid}")
