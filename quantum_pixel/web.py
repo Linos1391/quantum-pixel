@@ -170,9 +170,15 @@ async def end_encode(request: Request, uid: str):
         case "panel_resize":
             if input_path and form.get("image") and form.get("width") and form.get("length"):
                 def _resize() -> None:
-                    Image.open(form.get("image").file)\
-                            .resize((int(form.get("width")), int(form.get("length"))))\
-                            .save(_join_uid(uid, "encode_resize.png"), optimize=True)
+                    match form.get("image"):
+                        case "uploaded":
+                            img_file = input_path
+                        case "preview":
+                            img_file = _join_uid(uid, "encode_preview.png")
+                        case "custom":
+                            img_file = form.get("image_file").file
+                    Image.open(img_file).resize((int(form.get("width")), int(form.get("length"))))\
+                                        .save(_join_uid(uid, "encode_resize.png"), optimize=True)
                 try:
                     future_item=asyncio.get_event_loop().run_in_executor(executor, _resize)
                     background_task.update({uid: future_item})
@@ -187,16 +193,26 @@ async def end_encode(request: Request, uid: str):
 
         case "panel_steganography":
             if input_path and form.get("disguise"):
-                Image.open(form.get("disguise").file)\
-                            .save(_join_uid(uid, "encode_disguise.png"), optimize=True)
-                future_item=asyncio.get_event_loop().run_in_executor(executor, Steganography.encode,
-                                                        form.get("password"), input_path,
-                                                        _join_uid(uid, "encode_steganography.png"),
-                                                        _join_uid(uid, "encode_disguise.png"))
-                future_item.add_done_callback(lambda _: _remove_from_list(uid))
-                background_task.update({uid: future_item})
+                def _encode() -> str:
+                    match form.get("disguise"):
+                        case "uploaded":
+                            img_file = input_path
+                        case "preview":
+                            img_file = _join_uid(uid, "encode_preview.png")
+                        case "resize":
+                            img_file = _join_uid(uid, "encode_resize.png")
+                        case "custom":
+                            img_file = _join_uid(uid, "encode_disguise.png")
 
+                            img = Image.open(form.get("disguise_file").file)
+                            img.save(img_file, optimize=True)
+                    return Steganography.encode(form.get("password"), input_path,
+                                         _join_uid(uid, "encode_steganography.png"), img_file)
                 try:
+                    future_item=asyncio.get_event_loop().run_in_executor(executor, _encode)
+                    future_item.add_done_callback(lambda _: _remove_from_list(uid))
+                    background_task.update({uid: future_item})
+
                     if await future_item:
                         return_error = future_item.result()
                     else:

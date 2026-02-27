@@ -22,6 +22,13 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const fd = new FormData(form);
+
+            if ((fd.get("image") === "custom" && fd.get("image_file").size === 0) || 
+                (fd.get("disguise") === "custom" && fd.get("disguise_file").size === 0)) {
+                    alert("Please select custom file!");
+                    return false;
+            }
+
             const selected = document.querySelector('#tabs-headers .tab-btn.active').dataset.target;
             fd.append('selected', selected);
 
@@ -63,6 +70,16 @@
                             if (json.result) {
                                 result.style.display = "";
                                 result.innerHTML = json.result;
+
+                                if (selected === "panel_preview") {
+                                    divs = document.getElementsByClassName("preview-input");
+                                    Array.from(divs).forEach(function(div){
+                                        div.style.display = "";
+                                    })
+                                } else if (selected === "panel_resize") {
+                                    div = document.getElementsByClassName("resize-input")[0];
+                                    div.style.display = "";
+                                }
                             } else {
                                 result.style.display = "none";
                             }
