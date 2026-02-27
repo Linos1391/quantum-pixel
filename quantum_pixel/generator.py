@@ -69,7 +69,6 @@ class Generator:
                 try:
                     location = tuple(available_location[index].tolist())
                     index += 1
-                    print(self._remain_allowance, end="\r")
                 except IndexError:
                     break
                 for current_value in range(3): # RGBA channels

@@ -16,8 +16,8 @@
             });
             const json = await r.json();
             
+            const error = document.getElementById("error");
             if (json.error) {
-                const error = document.getElementById("error");
                 error.style.display = "";
                 error.innerHTML = json.error;
             } else {
@@ -25,8 +25,12 @@
             }
 
             if (json.result) {
+                result.style.display = "";
                 result.innerHTML = json.result;
+            } else {
+                result.style.display = "none";
             }
+
         } catch (err) {
             console.error(err);
         }
