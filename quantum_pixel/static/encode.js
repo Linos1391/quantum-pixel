@@ -29,18 +29,22 @@
             result.style.display = "";
             result.textContent = 'Loading, please wait patiently.';
 
-            const TIMEOUT = 1_800_000; // 30 minutes.
             try {
+                const TIMEOUT = 300_000; // 5 minutes.
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+
                 const r = await fetch(location.pathname, {
                     method: 'POST',
                     body: fd,
-                    signal: AbortSignal.timeout(TIMEOUT)
+                    signal: controller.signal
                 });
 
                 const reader = r.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = "";
 
+                let end_timeout = true
                 while (true) {
                     const { value, done } = await reader.read();
                     if (done) {
@@ -49,6 +53,7 @@
 
                             const error = document.getElementById("error");
                             if (json.error) {
+                                
                                 error.style.display = "";
                                 error.innerHTML = json.error;
                             } else {
@@ -56,10 +61,17 @@
                             } 
 
                             if (json.result) {
+                                result.style.display = "";
                                 result.innerHTML = json.result;
+                            } else {
+                                result.style.display = "none";
                             }
                         }
                         break;
+                    }
+                    else if (end_timeout) {
+                        end_timeout = false;
+                        clearTimeout(timeoutId);
                     };
 
                     buffer += decoder.decode(value, { stream: true });
@@ -96,7 +108,3 @@
         });
     });
 })();
-
-
-// TODO
-// - error did not display initially! --> error.html wraps everything.
