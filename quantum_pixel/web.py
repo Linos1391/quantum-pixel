@@ -116,6 +116,10 @@ async def upload(request: Request):
         await asyncio.get_event_loop().run_in_executor(executor, img.save,
                                                 _join_uid(uid, f"{upload_type}_input.png"))
         return JSONResponse(content={"redirect": f"/{upload_type}/{uid}"})
+    except UnidentifiedImageError:
+        return JSONResponse(content={"error": "Unsupported image extension."})
+    except Exception as err: #pylint: disable=W0718:broad-exception-caught
+        return JSONResponse(content={"error": err})
     except asyncio.exceptions.CancelledError:
         pass
 
