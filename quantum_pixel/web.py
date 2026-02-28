@@ -6,7 +6,6 @@ import os
 import time
 import asyncio
 import json
-import types
 from concurrent.futures.thread import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 
@@ -121,7 +120,7 @@ async def upload(request: Request):
     except Exception as err: #pylint: disable=W0718:broad-exception-caught
         return JSONResponse(content={"error": err})
     except asyncio.exceptions.CancelledError:
-        pass
+        return
 
 @app.get("/encode/{uid}", response_class=HTMLResponse)
 async def start_encode(request: Request, uid: str):
@@ -148,22 +147,24 @@ async def end_encode(request: Request, uid: str):
         case "panel_preview":
             if input_path and form.get("intensity"):
                 try:
+                    generator = Generator(input_path)
                     future_item = asyncio.get_event_loop().run_in_executor(executor,
-                                    Generator(input_path).preview, float(form.get("intensity")),
+                                    generator.preview, float(form.get("intensity")),
                                     _join_uid(uid, "encode_preview.png"))
+                    future_item.add_done_callback(lambda _: _remove_from_list(uid))
                     background_task.update({uid: future_item})
 
                     async def _progress_streaming():
-                        for progress in await future_item:
-                            yield f"{progress}\n"
-                        _remove_from_list(uid)
+                        while not future_item.done():
+                            yield f"{generator.get_progress()}\n"
+                            await asyncio.sleep(1)
                         yield json.dumps({"result": templates.get_template("result.html")
                                         .render({"path": f"{uid}/encode_preview.png",
                                                  "download": "encode-preview",})})
                     return StreamingResponse(_progress_streaming(), media_type="text/plain")
 
                 except asyncio.exceptions.CancelledError:
-                    pass
+                    return
                 except AssertionError as err:
                     return_error = err
 
@@ -191,7 +192,7 @@ async def end_encode(request: Request, uid: str):
                 except UnidentifiedImageError:
                     return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
-                    pass
+                    return
 
         case "panel_steganography":
             if input_path and form.get("disguise"):
@@ -226,7 +227,7 @@ async def end_encode(request: Request, uid: str):
                 except UnidentifiedImageError:
                     return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
-                    pass
+                    return
 
         case _:
             return_error = "Unable to load form."
@@ -288,7 +289,7 @@ async def end_decode(request: Request, uid: str):
     except BaseException as err: #pylint: disable=W0718:broad-exception-caught
         return_error = f"This error usually occurs when the image is not encoded from here: {err}"
     except asyncio.exceptions.CancelledError:
-        pass
+        return
     return {"error": templates.get_template("error.html").render({"error": return_error})}
 
 @app.post("/remove/{uid}")
@@ -297,12 +298,4 @@ async def remove(uid: str):
     shutil.rmtree(os.path.join(IMAGE_DIR, uid), ignore_errors=True)
     task: asyncio.Future = background_task.get(uid)
     if task:
-        try:
-            result = task.result()
-            if isinstance(result, types.GeneratorType):
-                result.throw(asyncio.exceptions.CancelledError("Task cancelled."))
-                _remove_from_list(uid)
-            else:
-                task.cancel()
-        except (asyncio.exceptions.InvalidStateError, asyncio.exceptions.CancelledError):
-            task.cancel()
+        task.cancel()
