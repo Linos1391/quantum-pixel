@@ -2,8 +2,6 @@
 edition = "2024"
 name = "quantum-pixel"
 version = "2.2.0"
-authors = ["Linos1391 <linos.coding@gmail.com>"]
-homepage = "https://github.com/Linos1391/quantum-pixel.git"
 description = "When both YES and NO are existed. Only human with emotions can comprehend."
 readme = "quantum_pixel/README_PYPI.md"
 license = "GNU General Public License v3 (GPLv3)"
