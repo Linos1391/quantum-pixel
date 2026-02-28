@@ -22,6 +22,13 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const fd = new FormData(form);
+
+            if ((fd.get("image") === "custom" && fd.get("image_file").size === 0) || 
+                (fd.get("disguise") === "custom" && fd.get("disguise_file").size === 0)) {
+                    alert("Please select custom file!");
+                    return false;
+            }
+
             const selected = document.querySelector('#tabs-headers .tab-btn.active').dataset.target;
             fd.append('selected', selected);
 
@@ -29,18 +36,22 @@
             result.style.display = "";
             result.textContent = 'Loading, please wait patiently.';
 
-            const TIMEOUT = 1_800_000; // 30 minutes.
             try {
+                const TIMEOUT = 300_000; // 5 minutes.
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+
                 const r = await fetch(location.pathname, {
                     method: 'POST',
                     body: fd,
-                    signal: AbortSignal.timeout(TIMEOUT)
+                    signal: controller.signal
                 });
 
                 const reader = r.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = "";
 
+                let end_timeout = true
                 while (true) {
                     const { value, done } = await reader.read();
                     if (done) {
@@ -49,6 +60,7 @@
 
                             const error = document.getElementById("error");
                             if (json.error) {
+                                
                                 error.style.display = "";
                                 error.innerHTML = json.error;
                             } else {
@@ -56,10 +68,27 @@
                             } 
 
                             if (json.result) {
+                                result.style.display = "";
                                 result.innerHTML = json.result;
+
+                                if (selected === "panel_preview") {
+                                    divs = document.getElementsByClassName("preview-input");
+                                    Array.from(divs).forEach(function(div){
+                                        div.style.display = "";
+                                    })
+                                } else if (selected === "panel_resize") {
+                                    div = document.getElementsByClassName("resize-input")[0];
+                                    div.style.display = "";
+                                }
+                            } else {
+                                result.style.display = "none";
                             }
                         }
                         break;
+                    }
+                    else if (end_timeout) {
+                        end_timeout = false;
+                        clearTimeout(timeoutId);
                     };
 
                     buffer += decoder.decode(value, { stream: true });
@@ -90,13 +119,13 @@
 
     // remove file when user left.
     window.addEventListener('beforeunload', () => {
+        const error = document.getElementById("error");
+        error.style.display = "";
+        error.innerHTML = "ExitError: You just exit and got auto cleanup!";
+
         fetch(`/remove/${location.pathname.split("/").pop()}`, {
             method: 'POST',
             keepalive: true
         });
     });
 })();
-
-
-// TODO
-// - error did not display initially! --> error.html wraps everything.

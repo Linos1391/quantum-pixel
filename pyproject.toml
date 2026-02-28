@@ -4,12 +4,13 @@ build-backend = "maturin"
 
 [project]
 name = "quantum-pixel"
+authors = [
+  { name = "Linos1391", email = "linos.coding@gmail.com" }
+]
 dynamic = [
     "version",
-    "authors",
     "description",
-    "readme",
-    "repository"
+    "readme"
 ]
 requires-python = ">=3.14"
 dependencies = [
@@ -27,6 +28,11 @@ classifiers=[
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
+
+[project.urls]
+repository = "https://github.com/Linos1391/quantum-pixel.git"
+issues = "https://github.com/Linos1391/quantum-pixel/issues"
+funding = "https://github.com/sponsors/Linos1391"
 
 [project.scripts]
 quantum_pixel = "quantum_pixel.main:main"

@@ -87,7 +87,7 @@ Really slow and often exceed RAM limit.
 
 - For private use or sharing with friends? Absolutely yes. I am using the free version of Render right now and totally recommend to try. Import `render.yml` as blueprint.
 
-- For your website? You may embed this project as it is and let it be entirely free.
+- For your website? You may embed this project and let it be entirely free. Optimize my garbage how ever you desire, though.
 
 <br>
 

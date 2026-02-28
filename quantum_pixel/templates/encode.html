@@ -54,15 +54,27 @@
                             <form class="panel-controls" enctype="multipart/form-data">
                                 <div>
                                     <label>Chosen Image</label>
-                                    <input name="image" type="file" accept="image/*" required/>
                                 </div>
                                 <div>
+                                    <input name="image" type="radio" value="uploaded" checked/>
+                                    <label><em>Uploaded Image</em></label>
+                                </div>
+                                <div class="preview-input" style="display: none;">    
+                                    <input name="image" type="radio" value="preview"/>
+                                    <label><em>Preview Image</em></label>
+                                </div>
+                                <div>
+                                    <input name="image" type="radio" value="custom"/>
+                                    <input name="image_file" type="file" accept="image/*"/>
+                                </div>
+
+                                <div>
                                     <label>Width</label>
-                                    <input name="width" type="number" min="0" placeholder="(width pixel)" required/>
+                                    <input name="width" type="number" min="1" placeholder="(width pixel)" required/>
                                 </div>
                                 <div>
                                     <label>Length</label>
-                                    <input name="length" type="number" min="0" placeholder="(length pixel)" required/>
+                                    <input name="length" type="number" min="1" placeholder="(length pixel)" required/>
                                 </div>
                                 <button id="apply-btn" class="actions primary">Apply</button>
                             </form>
@@ -74,10 +86,31 @@
                             <form class="panel-controls" enctype="multipart/form-data">
                                 <div>
                                     <label>Disguise Image</label>
-                                    <input name="disguise" type="file" accept="image/*" required/>
                                 </div>
                                 <div>
+                                    <input name="disguise" type="radio" value="uploaded" checked/>
+                                    <label><em>Uploaded Image</em></label>
+                                </div>
+
+                                <div class="preview-input" style="display: none;">    
+                                    <input name="disguise" type="radio" value="preview"/>
+                                    <label><em>Preview Image</em></label>
+                                </div>
+
+                                <div class="resize-input" style="display: none;">    
+                                    <input name="disguise" type="radio" value="resize"/>
+                                    <label><em>Resize Image</em></label>
+                                </div>
+
+                                <div>
+                                    <input name="disguise" type="radio" value="custom"/>
+                                    <input name="disguise_file" type="file" accept="image/*"/>
+                                </div>
+
+                                <div>
                                     <label>Password (not required but recommend)</label>
+                                </div>
+                                <div>
                                     <input name="password" type="password"/>
                                 </div>
                                 <button id="apply-btn" class="actions primary">Apply</button>

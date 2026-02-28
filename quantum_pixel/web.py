@@ -6,13 +6,12 @@ import os
 import time
 import asyncio
 import json
-import types
 from concurrent.futures.thread import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -88,33 +87,40 @@ async def start(request: Request):
     """A default start on app."""
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.post("/", response_class=RedirectResponse)
+@app.post("/", response_class=JSONResponse)
 async def upload(request: Request):
     """Upload the file, then encode or decode depend on selection."""
-    form = await request.form()
-    file = form.get("file")
+    try:
+        form = await request.form()
+        file = form.get("file")
 
-    if not file or not form.get("upload_type"):
-        return templates.TemplateResponse("index.html",
-                                          {"request": request, "error": "Unable to load form."})
+        if not file or not form.get("upload_type"):
+            return JSONResponse(content={"error": "Unable to load form."})
 
-    # Im poor u know lol. You can delete this line, just acknowledge your cpu power.
-    if file.size > 1_073_741_824:
-        return templates.TemplateResponse("index.html",
-                                          {"request": request, "error": "File should be <1GB."})
+        # Im poor u know lol. You can delete this line, just acknowledge your cpu power.
+        if file.size > 1_073_741_824:
+            return JSONResponse(content={"error": "File should be <1GB."})
 
-    while True: # Guarantee an individualized uid.
-        uid = uuid.uuid4().hex
-        try:
-            os.mkdir(os.path.join(IMAGE_DIR, uid))
-            break
-        except FileExistsError:
-            continue
+        while True: # Guarantee an individualized uid.
+            uid = uuid.uuid4().hex
+            try:
+                os.mkdir(os.path.join(IMAGE_DIR, uid))
+                break
+            except FileExistsError:
+                continue
 
-    upload_type = form.get("upload_type")
-    with open(_join_uid(uid, f"{upload_type}_input.png"), "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    return RedirectResponse(f"/{upload_type}/{uid}", status_code=303)
+        upload_type = form.get("upload_type")
+        img = Image.open(file.file)
+        img = await asyncio.get_event_loop().run_in_executor(executor, img.convert, "RGB")
+        await asyncio.get_event_loop().run_in_executor(executor, img.save,
+                                                _join_uid(uid, f"{upload_type}_input.png"))
+        return JSONResponse(content={"redirect": f"/{upload_type}/{uid}"})
+    except UnidentifiedImageError:
+        return JSONResponse(content={"error": "Unsupported image extension."})
+    except Exception as err: #pylint: disable=W0718:broad-exception-caught
+        return JSONResponse(content={"error": err})
+    except asyncio.exceptions.CancelledError:
+        return
 
 @app.get("/encode/{uid}", response_class=HTMLResponse)
 async def start_encode(request: Request, uid: str):
@@ -141,31 +147,39 @@ async def end_encode(request: Request, uid: str):
         case "panel_preview":
             if input_path and form.get("intensity"):
                 try:
+                    generator = Generator(input_path)
                     future_item = asyncio.get_event_loop().run_in_executor(executor,
-                                    Generator(input_path).preview, float(form.get("intensity")),
+                                    generator.preview, float(form.get("intensity")),
                                     _join_uid(uid, "encode_preview.png"))
+                    future_item.add_done_callback(lambda _: _remove_from_list(uid))
                     background_task.update({uid: future_item})
 
                     async def _progress_streaming():
-                        for progress in await future_item:
-                            yield f"{progress}\n"
-                        _remove_from_list(uid)
+                        while not future_item.done():
+                            yield f"{generator.get_progress()}\n"
+                            await asyncio.sleep(1)
                         yield json.dumps({"result": templates.get_template("result.html")
                                         .render({"path": f"{uid}/encode_preview.png",
                                                  "download": "encode-preview",})})
                     return StreamingResponse(_progress_streaming(), media_type="text/plain")
 
                 except asyncio.exceptions.CancelledError:
-                    return_error = "User exited."
+                    return
                 except AssertionError as err:
                     return_error = err
 
         case "panel_resize":
             if input_path and form.get("image") and form.get("width") and form.get("length"):
                 def _resize() -> None:
-                    Image.open(form.get("image").file)\
-                            .resize((int(form.get("width")), int(form.get("length"))))\
-                            .save(_join_uid(uid, "encode_resize.png"), optimize=True)
+                    match form.get("image"):
+                        case "uploaded":
+                            img_file = input_path
+                        case "preview":
+                            img_file = _join_uid(uid, "encode_preview.png")
+                        case "custom":
+                            img_file = form.get("image_file").file
+                    Image.open(img_file).resize((int(form.get("width")), int(form.get("length"))))\
+                                        .save(_join_uid(uid, "encode_resize.png"), optimize=True)
                 try:
                     future_item=asyncio.get_event_loop().run_in_executor(executor, _resize)
                     background_task.update({uid: future_item})
@@ -175,21 +189,33 @@ async def end_encode(request: Request, uid: str):
                                 "path": f"{uid}/encode_resize.png",
                                 "download": "encode-resize",
                             })})
+                except UnidentifiedImageError:
+                    return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
-                    return_error = "User exited."
+                    return
 
         case "panel_steganography":
             if input_path and form.get("disguise"):
-                Image.open(form.get("disguise").file)\
-                            .save(_join_uid(uid, "encode_disguise.png"), optimize=True)
-                future_item=asyncio.get_event_loop().run_in_executor(executor, Steganography.encode,
-                                                        form.get("password"), input_path,
-                                                        _join_uid(uid, "encode_steganography.png"),
-                                                        _join_uid(uid, "encode_disguise.png"))
-                future_item.add_done_callback(lambda _: _remove_from_list(uid))
-                background_task.update({uid: future_item})
+                def _encode() -> str:
+                    match form.get("disguise"):
+                        case "uploaded":
+                            img_file = input_path
+                        case "preview":
+                            img_file = _join_uid(uid, "encode_preview.png")
+                        case "resize":
+                            img_file = _join_uid(uid, "encode_resize.png")
+                        case "custom":
+                            img_file = _join_uid(uid, "encode_disguise.png")
 
+                            img = Image.open(form.get("disguise_file").file)
+                            img.save(img_file, optimize=True)
+                    return Steganography.encode(form.get("password"), input_path,
+                                         _join_uid(uid, "encode_steganography.png"), img_file)
                 try:
+                    future_item=asyncio.get_event_loop().run_in_executor(executor, _encode)
+                    future_item.add_done_callback(lambda _: _remove_from_list(uid))
+                    background_task.update({uid: future_item})
+
                     if await future_item:
                         return_error = future_item.result()
                     else:
@@ -198,8 +224,10 @@ async def end_encode(request: Request, uid: str):
                             "path": f"{uid}/encode_steganography.png",
                             "download": "encode-steganography",
                         })})
+                except UnidentifiedImageError:
+                    return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
-                    return_error = "User exited."
+                    return
 
         case _:
             return_error = "Unable to load form."
@@ -258,10 +286,10 @@ async def end_decode(request: Request, uid: str):
                     except UnidentifiedImageError:
                         continue
             return_error = "There is no readable image within the encoded file."
-    except asyncio.exceptions.CancelledError:
-        return_error = "User exited."
     except BaseException as err: #pylint: disable=W0718:broad-exception-caught
         return_error = f"This error usually occurs when the image is not encoded from here: {err}"
+    except asyncio.exceptions.CancelledError:
+        return
     return {"error": templates.get_template("error.html").render({"error": return_error})}
 
 @app.post("/remove/{uid}")
@@ -270,12 +298,4 @@ async def remove(uid: str):
     shutil.rmtree(os.path.join(IMAGE_DIR, uid), ignore_errors=True)
     task: asyncio.Future = background_task.get(uid)
     if task:
-        try:
-            result = task.result()
-            if isinstance(result, types.GeneratorType):
-                result.throw(asyncio.exceptions.CancelledError("Task cancelled."))
-                _remove_from_list(uid)
-            else:
-                task.cancel()
-        except (asyncio.exceptions.InvalidStateError, asyncio.exceptions.CancelledError):
-            task.cancel()
+        task.cancel()
