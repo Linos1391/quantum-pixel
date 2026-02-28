@@ -8,8 +8,7 @@
         result.innerHTML =  "Loading, please wait patiently. (If the wait time is too long, it is recommended to use the local version.)";
 
         const fd = new FormData(form, e.submitter);
-        console.log(fd);
-        
+
         try {
             const r = await fetch(location.pathname, {
                 method: 'POST',
