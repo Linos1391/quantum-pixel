@@ -85,7 +85,7 @@ def _join_uid(uid: str, filename: str) -> str:
 @app.get("/", response_class=HTMLResponse)
 async def start(request: Request):
     """A default start on app."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 @app.post("/", response_class=JSONResponse)
 async def upload(request: Request):
@@ -126,10 +126,10 @@ async def upload(request: Request):
 async def start_encode(request: Request, uid: str):
     """Start the encode html."""
     if not os.path.exists(_join_uid(uid, "encode_input.png")):
-        return templates.TemplateResponse("encode.html", {"request": request,
+        return templates.TemplateResponse(request, "encode.html", {
             "error": ("The image file cannot be found, you might just exit and got auto cleanup! "
                      "Otherwise, there might be an attack/error, please issue me if that's so.")})
-    return templates.TemplateResponse("encode.html", {"request": request, "uid": uid})
+    return templates.TemplateResponse(request, "encode.html", {"uid": uid})
 
 @app.post("/encode/{uid}")
 async def end_encode(request: Request, uid: str):
@@ -240,10 +240,10 @@ async def end_encode(request: Request, uid: str):
 async def start_decode(request: Request, uid: str):
     """Start the decode html."""
     if not os.path.exists(_join_uid(uid, "decode_input.png")):
-        return templates.TemplateResponse("decode.html", {"request": request,
+        return templates.TemplateResponse(request, "decode.html", {
             "error": ("The image file cannot be found, you might just exit and got auto cleanup! "
                     "Otherwise, there might be an attack/error, please issue me if that's so.")})
-    return templates.TemplateResponse("decode.html", {"request": request})
+    return templates.TemplateResponse(request, "decode.html")
 
 @app.post("/decode/{uid}", response_class=JSONResponse)
 async def end_decode(request: Request, uid: str):
