@@ -10,6 +10,8 @@ from PIL import Image
 from quantum_pixel import Generator
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSET_PATH = os.path.join(PROJECT_ROOT, "assets")
+TEST_ASSET_PATH = os.path.join(PROJECT_ROOT, "tests", "assets")
 
 def test_unreadable_file():
     """Test raising error when passing an unreadable file."""
@@ -18,7 +20,7 @@ def test_unreadable_file():
 
 def test_init():
     """Test the __init__ function"""
-    generator = Generator(os.path.join(PROJECT_ROOT, "assets", "material.png"))
+    generator = Generator(os.path.join(ASSET_PATH, "material.png"))
 
     assert isinstance(generator.img_data, np.ndarray)
 
@@ -28,9 +30,8 @@ def test_init():
 
 def test_preview():
     """Test the `preview` function"""
-    generator = Generator(os.path.join(PROJECT_ROOT, "assets", "material.png"))
+    generator = Generator(os.path.join(ASSET_PATH, "material.png"))
+    generator.preview(0.2, os.path.join(TEST_ASSET_PATH, "preview.png"))
 
-    for _ in generator.preview(0.2, os.path.join(PROJECT_ROOT, "tests", "assets", "preview.png")):
-        pass
-    assert Image.open(os.path.join(PROJECT_ROOT, "tests", "assets", "preview.png"))
-    shutil.rmtree(os.path.join(PROJECT_ROOT, "tests", "assets"))
+    assert Image.open(os.path.join(TEST_ASSET_PATH, "preview.png"))
+    shutil.rmtree(TEST_ASSET_PATH)
