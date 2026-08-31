@@ -82,6 +82,8 @@ def _join_uid(uid: str, filename: str) -> str:
 
 
 
+FILE_SIZE_LIMIT: int = 1_073_741_824
+
 @app.get("/", response_class=HTMLResponse)
 async def start(request: Request):
     """A default start on app."""
@@ -98,7 +100,7 @@ async def upload(request: Request):
             return JSONResponse(content={"error": "Unable to load form."})
 
         # Im poor u know lol. You can delete this line, just acknowledge your cpu power.
-        if file.size > 1_073_741_824:
+        if file.size > FILE_SIZE_LIMIT:
             return JSONResponse(content={"error": "File should be <1GB."})
 
         while True: # Guarantee an individualized uid.
@@ -115,12 +117,12 @@ async def upload(request: Request):
         await asyncio.get_event_loop().run_in_executor(executor, img.save,
                                                 _join_uid(uid, f"{upload_type}_input.png"))
         return JSONResponse(content={"redirect": f"/{upload_type}/{uid}"})
+    except asyncio.exceptions.CancelledError:
+        return
     except UnidentifiedImageError:
         return JSONResponse(content={"error": "Unsupported image extension."})
     except Exception as err: #pylint: disable=W0718:broad-exception-caught
         return JSONResponse(content={"error": err})
-    except asyncio.exceptions.CancelledError:
-        return
 
 @app.get("/encode/{uid}", response_class=HTMLResponse)
 async def start_encode(request: Request, uid: str):
@@ -189,10 +191,10 @@ async def end_encode(request: Request, uid: str):
                                 "path": f"{uid}/encode_resize.png",
                                 "download": "encode-resize",
                             })})
-                except UnidentifiedImageError:
-                    return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
                     return
+                except UnidentifiedImageError:
+                    return_error =  "Unsupported image extension."
 
         case "panel_steganography":
             if input_path and form.get("disguise"):
@@ -224,10 +226,10 @@ async def end_encode(request: Request, uid: str):
                             "path": f"{uid}/encode_steganography.png",
                             "download": "encode-steganography",
                         })})
-                except UnidentifiedImageError:
-                    return_error =  "Unsupported image extension."
                 except asyncio.exceptions.CancelledError:
                     return
+                except UnidentifiedImageError:
+                    return_error =  "Unsupported image extension."
 
         case _:
             return_error = "Unable to load form."
@@ -286,10 +288,10 @@ async def end_decode(request: Request, uid: str):
                     except UnidentifiedImageError:
                         continue
             return_error = "There is no readable image within the encoded file."
-    except BaseException as err: #pylint: disable=W0718:broad-exception-caught
-        return_error = f"This error usually occurs when the image is not encoded from here: {err}"
     except asyncio.exceptions.CancelledError:
         return
+    except BaseException as err: #pylint: disable=W0718:broad-exception-caught
+        return_error = f"This error usually occurs when the image is not encoded from here: {err}"
     return {"error": templates.get_template("error.html").render({"error": return_error})}
 
 @app.post("/remove/{uid}")
